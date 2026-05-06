@@ -2,6 +2,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
+/// 暖调极简背景:奶白底 + 极淡珊瑚光晕,呼吸感而非科技感。
 class AnimatedMeshBackground extends StatefulWidget {
   final Widget child;
   const AnimatedMeshBackground({super.key, required this.child});
@@ -19,7 +20,7 @@ class _AnimatedMeshBackgroundState extends State<AnimatedMeshBackground>
     super.initState();
     _controller = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 10),
+      duration: const Duration(seconds: 18),
     )..repeat();
   }
 
@@ -33,34 +34,15 @@ class _AnimatedMeshBackgroundState extends State<AnimatedMeshBackground>
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        // Dark background base
         Container(color: AppColors.background),
-        // Animated Mesh
         AnimatedBuilder(
           animation: _controller,
-          builder: (context, child) {
+          builder: (context, _) {
             return CustomPaint(
-              painter: _MeshPainter(
-                animationValue: _controller.value,
-                primaryColor: AppColors.accent,
-                secondaryColor: AppColors.surface,
-              ),
+              painter: _MeshPainter(animationValue: _controller.value),
               size: Size.infinite,
             );
           },
-        ),
-        // Glass overlay
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                AppColors.background.withValues(alpha: 0.1),
-                AppColors.background.withValues(alpha: 0.5),
-              ],
-            ),
-          ),
         ),
         widget.child,
       ],
@@ -70,56 +52,47 @@ class _AnimatedMeshBackgroundState extends State<AnimatedMeshBackground>
 
 class _MeshPainter extends CustomPainter {
   final double animationValue;
-  final Color primaryColor;
-  final Color secondaryColor;
-
-  _MeshPainter({
-    required this.animationValue,
-    required this.primaryColor,
-    required this.secondaryColor,
-  });
+  _MeshPainter({required this.animationValue});
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Generate organic blobs
+    // 极淡的暖光晕,只用来打破奶白底的均匀,不喧宾夺主
     final paint = Paint()
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 80);
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 120);
 
     void drawBlob(Offset center, double radius, Color color, double phase) {
       final offset = Offset(
-        math.sin(animationValue * 2 * math.pi + phase) * 40,
-        math.cos(animationValue * 2 * math.pi + phase) * 40,
+        math.sin(animationValue * 2 * math.pi + phase) * 30,
+        math.cos(animationValue * 2 * math.pi + phase) * 24,
       );
       paint.color = color;
       canvas.drawCircle(center + offset, radius, paint);
     }
 
-    // 纯灰色光晕（无蓝调）
-    // 右上角光晕
+    // 右上:珊瑚浅
     drawBlob(
-      Offset(size.width * 0.8, size.height * 0.2),
-      200,
-      const Color(0xFF808080).withValues(alpha: 0.08),
+      Offset(size.width * 0.85, size.height * 0.18),
+      220,
+      const Color(0xFFE9C4B8).withValues(alpha: 0.45),
       0,
     );
-
-    // 左下角光晕
+    // 左下:暖米色
     drawBlob(
-      Offset(size.width * 0.2, size.height * 0.8),
-      250,
-      const Color(0xFF606060).withValues(alpha: 0.06),
+      Offset(size.width * 0.15, size.height * 0.85),
+      260,
+      const Color(0xFFE6DFD3).withValues(alpha: 0.55),
       math.pi,
     );
-    
-    // 中心微光
+    // 中央:更淡的奶咖
     drawBlob(
-      Offset(size.width * 0.5, size.height * 0.5),
+      Offset(size.width * 0.5, size.height * 0.55),
       300,
-      const Color(0xFF505050).withValues(alpha: 0.04),
+      const Color(0xFFEDE6DA).withValues(alpha: 0.35),
       math.pi / 2,
     );
   }
 
   @override
-  bool shouldRepaint(_MeshPainter oldDelegate) => true;
+  bool shouldRepaint(_MeshPainter oldDelegate) =>
+      oldDelegate.animationValue != animationValue;
 }

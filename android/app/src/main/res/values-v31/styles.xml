@@ -2,7 +2,7 @@
 <resources>
     <!-- Android 12+ (API 31+) 专用主题 - 使用 SplashScreen 兼容库 -->
     <style name="LaunchTheme" parent="Theme.SplashScreen">
-        <!-- 纯黑色背景 -->
+        <!-- 暖调奶白色背景 -->
         <item name="windowSplashScreenBackground">@color/launch_background</item>
         <!-- 不显示图标 - 使用 1dp 透明 drawable -->
         <item name="windowSplashScreenAnimatedIcon">@drawable/splash_icon_empty</item>
@@ -11,8 +11,9 @@
         <!-- 过渡到的主题 -->
         <item name="postSplashScreenTheme">@style/NormalTheme</item>
     </style>
-    
-    <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
+
+    <style name="NormalTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@color/launch_background</item>
+        <item name="android:forceDarkAllowed">false</item>
     </style>
 </resources>

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:window_manager/window_manager.dart';
 
+import 'config/brand_config.dart';
 import 'l10n/generated/app_localizations.dart';
 import 'screens/auth_screen.dart';
 import 'screens/root_shell.dart';
@@ -54,13 +55,13 @@ void main() async {
       }
     }
     
-    WindowOptions windowOptions = const WindowOptions(
-      size: Size(1000, 720),
-      minimumSize: Size(800, 600),
+    WindowOptions windowOptions = WindowOptions(
+      size: const Size(1000, 720),
+      minimumSize: const Size(800, 600),
       center: true,
       backgroundColor: Colors.transparent,
       skipTaskbar: false,
-      title: 'Flux',
+      title: BrandConfig.appName,
     );
     
     await windowManager.waitUntilReadyToShow(windowOptions, () async {
@@ -149,7 +150,7 @@ class FluxApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flux',
+      title: BrandConfig.appName,
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark(),
       // 多语言配置

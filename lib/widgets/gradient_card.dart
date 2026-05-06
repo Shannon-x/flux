@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 
-import 'dart:ui';
-
+/// 暖调极简卡片:浮白底 + 极淡描边 + 几乎不可见的暖色阴影。
+/// 不再使用毛玻璃 / 渐变叠加 —— 浅色主题下毛玻璃会让界面发灰。
 class GradientCard extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry padding;
@@ -11,51 +11,26 @@ class GradientCard extends StatelessWidget {
   const GradientCard({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.all(18),
-    this.borderRadius = 20.0,
+    this.padding = const EdgeInsets.all(20),
+    this.borderRadius = 22.0,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(borderRadius),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-        child: Container(
-          decoration: BoxDecoration(
-            color: AppColors.surface.withValues(alpha: 0.6),
-            borderRadius: BorderRadius.circular(borderRadius),
-            border: Border.all(
-              color: AppColors.border.withValues(alpha: 0.5),
-              width: 1.0,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.2),
-                blurRadius: 20,
-                offset: const Offset(0, 10),
-              ),
-            ],
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(borderRadius),
+        border: Border.all(color: AppColors.border, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.shadowFaint,
+            blurRadius: 24,
+            offset: const Offset(0, 8),
           ),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(borderRadius),
-              gradient: LinearGradient(
-                colors: [
-                  Colors.white.withValues(alpha: 0.05),
-                  Colors.transparent,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: Padding(
-              padding: padding,
-              child: child,
-            ),
-          ),
-        ),
+        ],
       ),
+      child: Padding(padding: padding, child: child),
     );
   }
 }

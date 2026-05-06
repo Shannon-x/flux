@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Theme applied to the Android Window while the process is starting when the OS's Dark Mode setting is off -->
-    <style name="LaunchTheme" parent="@android:style/Theme.Black.NoTitleBar">
+    <!-- Theme applied to the Android Window while the process is starting (light mode) -->
+    <style name="LaunchTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@color/launch_background</item>
-        <!-- Android 12+ 启动画面设置 - 使用透明图标 -->
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_icon_empty</item>
         <item name="android:windowSplashScreenBackground">@color/launch_background</item>
         <item name="android:windowSplashScreenIconBackgroundColor">@color/launch_background</item>
@@ -14,7 +13,7 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
     </style>
-    <style name="SplashTheme" parent="@android:style/Theme.Black.NoTitleBar">
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@color/launch_background</item>
         <item name="android:windowSplashScreenAnimatedIcon">@color/launch_background</item>
         <item name="android:windowSplashScreenBackground">@color/launch_background</item>
@@ -27,19 +26,14 @@
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
     </style>
     <!-- Theme applied to the Android Window as soon as the process has started.
-         This theme determines the color of the Android Window while your
-         Flutter UI initializes, as well as behind your Flutter UI while its
-         running.
-
-         This Theme is only used starting with V2 of Flutter's Android embedding.
-         Using DayNight allows Crisp SDK to detect dark mode setting. -->
-    <style name="NormalTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+         Forced to Light to avoid black flicker on dark-mode systems while Flutter draws its cream background. -->
+    <style name="NormalTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@color/launch_background</item>
         <item name="android:forceDarkAllowed">false</item>
     </style>
-    
+
     <!-- 透明主题：让 SplashActivity 在 MainActivity 后面可见 -->
-    <style name="TranslucentTheme" parent="@android:style/Theme.Black.NoTitleBar">
+    <style name="TranslucentTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>

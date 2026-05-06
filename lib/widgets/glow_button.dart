@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
 import 'flux_loader.dart';
 
+/// 暖调主按钮:纯色珊瑚橙胶囊形,极淡阴影。
 class GlowButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
@@ -18,56 +19,55 @@ class GlowButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final enabled = onPressed != null && !isLoading;
     return AnimatedOpacity(
-      opacity: onPressed == null ? 0.5 : 1,
-      duration: const Duration(milliseconds: 250),
+      opacity: enabled ? 1 : 0.55,
+      duration: const Duration(milliseconds: 200),
       child: DecoratedBox(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          gradient: const LinearGradient(
-            colors: [AppColors.accent, AppColors.accentSoft],
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.accent.withValues(alpha: 0.35),
-              blurRadius: 18,
-              offset: const Offset(0, 10),
-            ),
-          ],
+          borderRadius: BorderRadius.circular(999),
+          boxShadow: enabled
+              ? [
+                  BoxShadow(
+                    color: AppColors.accent.withValues(alpha: 0.18),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ]
+              : null,
         ),
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
+            backgroundColor: AppColors.accent,
+            foregroundColor: Colors.white,
+            disabledBackgroundColor: AppColors.accent,
+            disabledForegroundColor: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+            shape: const StadiumBorder(),
+            elevation: 0,
             shadowColor: Colors.transparent,
-            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
-            ),
           ),
           onPressed: onPressed,
           child: isLoading
-              ? SizedBox(
-                  height: 24,
-                  width: 24,
-                  child: FluxLoader(
-                    size: 24, 
-                    color: AppColors.surface,
-                  ),
+              ? const SizedBox(
+                  height: 22,
+                  width: 22,
+                  child: FluxLoader(size: 22, color: Colors.white),
                 )
               : Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (icon != null) ...[
-                      Icon(icon, size: 18, color: AppColors.surface),
+                      Icon(icon, size: 18, color: Colors.white),
                       const SizedBox(width: 8),
                     ],
                     Text(
                       label,
                       style: const TextStyle(
-                        color: AppColors.surface,
+                        color: Colors.white,
                         fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                        letterSpacing: 0.5,
+                        fontSize: 15,
+                        letterSpacing: 0.2,
                       ),
                     ),
                   ],

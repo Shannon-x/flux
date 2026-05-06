@@ -1,3 +1,5 @@
+import '../utils/json_utils.dart';
+
 class PaymentMethod {
   PaymentMethod({
     required this.id,
@@ -13,10 +15,10 @@ class PaymentMethod {
 
   factory PaymentMethod.fromJson(Map<String, dynamic> json) {
     return PaymentMethod(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? '',
-      payment: json['payment'] ?? '',
-      icon: json['icon'],
+      id: JsonUtils.asInt(json['id']),
+      name: JsonUtils.asString(json['name']),
+      payment: JsonUtils.asString(json['payment']),
+      icon: json['icon'] is String ? json['icon'] as String : null,
     );
   }
 }

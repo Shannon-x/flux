@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 极简柔和光晕 -->
+<!-- 暖珊瑚柔光 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="oval">
     <gradient
-        android:centerColor="#30909090"
-        android:endColor="#00000000"
-        android:startColor="#50B0B0B0"
+        android:centerColor="#28C94F2E"
+        android:endColor="#00C94F2E"
+        android:startColor="#40E08862"
         android:gradientRadius="180dp"
         android:type="radial" />
 </shape>

@@ -9,6 +9,7 @@ import '../widgets/glow_button.dart';
 import '../widgets/gradient_card.dart';
 import '../widgets/section_header.dart';
 import '../widgets/flux_loader.dart';
+import '../widgets/warm_context_menu.dart';
 
 import 'order_success_screen.dart';
 
@@ -221,18 +222,26 @@ class _OrdersScreenState extends State<OrdersScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           AppLocalizations.of(context)?.unpaidOrder ?? 'Unpaid Order',
-          style: const TextStyle(color: Colors.white, fontSize: 18),
+          style: const TextStyle(
+            color: AppColors.textPrimary,
+            fontSize: 18,
+            fontWeight: FontWeight.w700,
+          ),
         ),
         content: Text(
-          AppLocalizations.of(context)?.unpaidOrderMessage ?? 'You have an unpaid order. Please continue to pay or cancel.',
-          style: TextStyle(color: Colors.white.withOpacity(0.8)),
+          AppLocalizations.of(context)?.unpaidOrderMessage ??
+              'You have an unpaid order. Please continue to pay or cancel.',
+          style: const TextStyle(
+            color: AppColors.textSecondary,
+            height: 1.6,
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, 'cancel'),
             child: Text(
               AppLocalizations.of(context)?.cancelOrder ?? 'Cancel Order',
-              style: TextStyle(color: Colors.red.shade400),
+              style: const TextStyle(color: AppColors.danger),
             ),
           ),
           TextButton(
@@ -502,6 +511,7 @@ class _OrdersScreenState extends State<OrdersScreen> {
                   const SizedBox(height: 12),
                   TextField(
                     controller: _couponController,
+                    contextMenuBuilder: warmEditableContextMenuBuilder,
                     decoration: InputDecoration(labelText: AppLocalizations.of(context)?.coupon ?? 'Coupon (Optional)'),
                   ),
                   const SizedBox(height: 12),

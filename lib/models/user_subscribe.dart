@@ -1,3 +1,5 @@
+import '../utils/json_utils.dart';
+
 class UserSubscribe {
   UserSubscribe({
     required this.planId,
@@ -21,14 +23,14 @@ class UserSubscribe {
 
   factory UserSubscribe.fromJson(Map<String, dynamic> json) {
     return UserSubscribe(
-      planId: json['plan_id'] ?? 0,
-      token: json['token'] ?? '',
-      expiredAt: json['expired_at'] ?? 0,
-      upload: json['u'] ?? 0,
-      download: json['d'] ?? 0,
-      transferEnable: json['transfer_enable'] ?? 0,
-      email: json['email'] ?? '',
-      subscribeUrl: json['subscribe_url'] ?? '',
+      planId: JsonUtils.asInt(json['plan_id']),
+      token: JsonUtils.asString(json['token']),
+      expiredAt: JsonUtils.asInt(json['expired_at']),
+      upload: JsonUtils.asInt(json['u']),
+      download: JsonUtils.asInt(json['d']),
+      transferEnable: JsonUtils.asInt(json['transfer_enable']),
+      email: JsonUtils.asString(json['email']),
+      subscribeUrl: JsonUtils.asString(json['subscribe_url']),
     );
   }
 }

@@ -168,9 +168,9 @@ class _PlansScreenState extends State<PlansScreen> {
                                     plan.name,
                                     style: const TextStyle(
                                       fontWeight: FontWeight.w700,
-                                      color: Colors.white,
+                                      color: AppColors.textPrimary,
                                       fontSize: 17,
-                                      letterSpacing: -0.3,
+                                      letterSpacing: -0.2,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
@@ -180,9 +180,10 @@ class _PlansScreenState extends State<PlansScreen> {
                                               context,
                                             )?.globalNodes ??
                                             'Global premium nodes'),
-                                    style: TextStyle(
-                                      color: Colors.white.withOpacity(0.45),
+                                    style: const TextStyle(
+                                      color: AppColors.textSecondary,
                                       fontSize: 12,
+                                      height: 1.6,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
@@ -194,27 +195,20 @@ class _PlansScreenState extends State<PlansScreen> {
                             // 流量标签
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
+                                horizontal: 12,
                                 vertical: 5,
                               ),
                               decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    AppColors.accent.withOpacity(0.15),
-                                    AppColors.accent.withOpacity(0.05),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(
-                                  color: AppColors.accent.withOpacity(0.25),
-                                ),
+                                color: AppColors.accentSoft,
+                                borderRadius: BorderRadius.circular(999),
                               ),
                               child: Text(
                                 Formatters.formatBytes(plan.transferEnable),
                                 style: const TextStyle(
                                   color: AppColors.accent,
                                   fontSize: 11,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: 0.3,
                                 ),
                               ),
                             ),
@@ -242,17 +236,21 @@ class _PlansScreenState extends State<PlansScreen> {
                                   TextSpan(
                                     text: Formatters.formatCurrency(price),
                                     style: const TextStyle(
-                                      color: Colors.white,
+                                      color: AppColors.textPrimary,
                                       fontSize: 24,
                                       fontWeight: FontWeight.w800,
-                                      letterSpacing: -0.5,
+                                      letterSpacing: -0.4,
                                     ),
                                   ),
                                   if (priceLabel.isNotEmpty)
+                                    const TextSpan(
+                                      text: '',
+                                    ),
+                                  if (priceLabel.isNotEmpty)
                                     TextSpan(
                                       text: priceLabel,
-                                      style: TextStyle(
-                                        color: Colors.white.withOpacity(0.4),
+                                      style: const TextStyle(
+                                        color: AppColors.textSecondary,
                                         fontSize: 12,
                                         fontWeight: FontWeight.w400,
                                       ),
@@ -264,12 +262,12 @@ class _PlansScreenState extends State<PlansScreen> {
                             // 按钮
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                horizontal: 14,
+                                horizontal: 16,
                                 vertical: 8,
                               ),
                               decoration: BoxDecoration(
                                 color: AppColors.accent,
-                                borderRadius: BorderRadius.circular(10),
+                                borderRadius: BorderRadius.circular(999),
                               ),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
@@ -277,16 +275,17 @@ class _PlansScreenState extends State<PlansScreen> {
                                   Text(
                                     AppLocalizations.of(context)?.subscribe ??
                                         'Subscribe',
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w700,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
                                       fontSize: 12,
+                                      letterSpacing: 0.3,
                                     ),
                                   ),
-                                  SizedBox(width: 2),
-                                  Icon(
+                                  const SizedBox(width: 4),
+                                  const Icon(
                                     Icons.arrow_forward_rounded,
-                                    color: Colors.black,
+                                    color: Colors.white,
                                     size: 14,
                                   ),
                                 ],
@@ -342,7 +341,7 @@ class _PlansScreenState extends State<PlansScreen> {
       context: context,
       barrierDismissible: true,
       barrierLabel: 'Dismiss',
-      barrierColor: Colors.black.withValues(alpha: 0.6),
+      barrierColor: AppColors.textPrimary.withValues(alpha: 0.35),
       transitionDuration: const Duration(milliseconds: 400),
       pageBuilder: (context, animation, secondaryAnimation) => const SizedBox(),
       transitionBuilder: (context, animation, secondaryAnimation, child) {

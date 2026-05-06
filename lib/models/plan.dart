@@ -1,3 +1,5 @@
+import '../utils/json_utils.dart';
+
 class Plan {
   Plan({
     required this.id,
@@ -31,20 +33,20 @@ class Plan {
 
   factory Plan.fromJson(Map<String, dynamic> json) {
     return Plan(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? 'Plan',
+      id: JsonUtils.asInt(json['id']),
+      name: JsonUtils.asString(json['name'], defaultValue: 'Plan'),
       // API 返回的 transfer_enable 单位是 GB，需要转换为字节
-      transferEnable: ((json['transfer_enable'] ?? 0) as int) * 1024 * 1024 * 1024,
-      content: json['content'],
-      monthPrice: json['month_price'],
-      quarterPrice: json['quarter_price'],
-      halfYearPrice: json['half_year_price'],
-      yearPrice: json['year_price'],
-      twoYearPrice: json['two_year_price'],
-      threeYearPrice: json['three_year_price'],
-      onetimePrice: json['onetime_price'],
-      resetPrice: json['reset_price'],
-      resetMethod: json['reset_traffic_method'],
+      transferEnable: JsonUtils.asInt(json['transfer_enable']) * 1024 * 1024 * 1024,
+      content: json['content'] is String ? json['content'] as String : null,
+      monthPrice: JsonUtils.asIntOrNull(json['month_price']),
+      quarterPrice: JsonUtils.asIntOrNull(json['quarter_price']),
+      halfYearPrice: JsonUtils.asIntOrNull(json['half_year_price']),
+      yearPrice: JsonUtils.asIntOrNull(json['year_price']),
+      twoYearPrice: JsonUtils.asIntOrNull(json['two_year_price']),
+      threeYearPrice: JsonUtils.asIntOrNull(json['three_year_price']),
+      onetimePrice: JsonUtils.asIntOrNull(json['onetime_price']),
+      resetPrice: JsonUtils.asIntOrNull(json['reset_price']),
+      resetMethod: JsonUtils.asIntOrNull(json['reset_traffic_method']),
     );
   }
 }

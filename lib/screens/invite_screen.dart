@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../services/v2board_api.dart';
 import '../models/invite_data.dart';
@@ -159,182 +159,142 @@ class _InviteScreenState extends State<InviteScreen>
   Widget _buildSectionHeader(String title) {
     return Text(
       title,
-      style: const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
+      style: GoogleFonts.notoSerifSc(
+        fontSize: 18,
+        fontWeight: FontWeight.w700,
+        color: AppColors.textPrimary,
+        letterSpacing: 0.2,
       ),
     );
   }
 
   Widget _buildStatsGrid(InviteStat stat) {
-    return AnimatedBuilder(
-      animation: _breatheAnim,
-      builder: (context, child) {
-        final shadowOpacity = 0.1 + (_breatheAnim.value * 0.15); // 0.1 -> 0.25
-        final borderOpacity = 0.2 + (_breatheAnim.value * 0.3); // 0.2 -> 0.5
-        final blurRadius = 10.0 + (_breatheAnim.value * 15.0); // 10 -> 25
-
-        return Column(
-          children: [
-            // 1. Financial Card (Black/Silver breathing) - Compact Horizontal Layout
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              decoration: BoxDecoration(
-                // Dark Metallic Gradient
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFF2B2E36), // Lighter metallic
-                    Color(0xFF15171C), // Deep dark
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: AppColors.accent.withOpacity(borderOpacity),
-                  width: 1.0,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppColors.accent.withOpacity(shadowOpacity),
-                    blurRadius: blurRadius,
-                    spreadRadius: 1,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
+    return Column(
+      children: [
+        // 1. 财务主卡:浮白底 + 衬线大数字
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 22),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: AppColors.border, width: 1),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.shadowFaint,
+                blurRadius: 20,
+                offset: const Offset(0, 10),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Left Side: Label + Big Amount
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.05),
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.1),
-                              ),
-                            ),
-                            child: const Icon(
-                              Icons.account_balance_wallet_outlined,
-                              color: AppColors.accent,
-                              size: 14,
-                            ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: const BoxDecoration(
+                            color: AppColors.accentSoft,
+                            shape: BoxShape.circle,
                           ),
-                          const SizedBox(width: 8),
-                          Text(
-                            AppLocalizations.of(context)?.pendingCommission ??
-                                'Available Commission',
-                            style: TextStyle(
-                              color: AppColors.accent.withOpacity(0.8),
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                            ),
+                          child: const Icon(
+                            Icons.account_balance_wallet_outlined,
+                            color: AppColors.accent,
+                            size: 14,
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Text(
-                        '¥${stat.availableCommission}',
-                        style: const TextStyle(
-                          color: AppColors.textPrimary,
-                          fontSize: 26,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: -0.5,
-                          shadows: [
-                            Shadow(
-                              color: Colors.black,
-                              blurRadius: 10,
-                              offset: Offset(0, 2),
-                            ),
-                          ],
                         ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            AppLocalizations.of(context)
+                                    ?.pendingCommission ??
+                                'Available Commission',
+                            style: const TextStyle(
+                              color: AppColors.textSecondary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.3,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      '¥${stat.availableCommission}',
+                      style: GoogleFonts.notoSerifSc(
+                        color: AppColors.textPrimary,
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.4,
                       ),
-                    ],
-                  ),
-
-                  // Divider
-                  Container(
-                    width: 1,
-                    height: 50,
-                    color: AppColors.accent.withOpacity(0.1),
-                  ),
-
-                  // Right Side: Compact Stats Column
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      _buildMiniStat(
-                        AppLocalizations.of(context)?.pendingCommission ??
-                            'Pending',
-                        '¥${stat.pendingCommission}',
-                      ),
-                      const SizedBox(height: 12),
-                      _buildMiniStat(
-                        AppLocalizations.of(context)?.totalCommission ??
-                            'Total',
-                        '¥${stat.validCommission}',
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            // 2. Performance Card (Subtle breathing)
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF0F1014), // Darker surface
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: AppColors.accent.withOpacity(
-                    borderOpacity * 0.5,
-                  ), // Subtle border
+                    ),
+                  ],
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.5),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
+              Container(
+                width: 1,
+                height: 50,
+                color: AppColors.border,
+              ),
+              const SizedBox(width: 16),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  _buildPerformanceItem(
-                    Icons.people_outline_rounded,
-                    '${stat.registeredUsers}',
-                    AppLocalizations.of(context)?.registeredUsers ?? 'Users',
+                  _buildMiniStat(
+                    AppLocalizations.of(context)?.pendingCommission ??
+                        'Pending',
+                    '¥${stat.pendingCommission}',
                   ),
-                  Container(
-                    width: 1,
-                    height: 32,
-                    color: AppColors.accent.withOpacity(0.1),
-                  ),
-                  _buildPerformanceItem(
-                    Icons.percent_rounded,
-                    '${stat.commissionRate}%',
-                    AppLocalizations.of(context)?.commissionPercentage ??
-                        'Rate',
+                  const SizedBox(height: 12),
+                  _buildMiniStat(
+                    AppLocalizations.of(context)?.totalCommission ?? 'Total',
+                    '¥${stat.validCommission}',
                   ),
                 ],
               ),
-            ),
-          ],
-        );
-      },
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // 2. 业绩卡:浮白底
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+          decoration: BoxDecoration(
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.border, width: 1),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildPerformanceItem(
+                Icons.people_outline_rounded,
+                '${stat.registeredUsers}',
+                AppLocalizations.of(context)?.registeredUsers ?? 'Users',
+              ),
+              Container(
+                width: 1,
+                height: 32,
+                color: AppColors.border,
+              ),
+              _buildPerformanceItem(
+                Icons.percent_rounded,
+                '${stat.commissionRate}%',
+                AppLocalizations.of(context)?.commissionPercentage ?? 'Rate',
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -344,9 +304,10 @@ class _InviteScreenState extends State<InviteScreen>
       children: [
         Text(
           label,
-          style: TextStyle(
-            color: AppColors.accent.withOpacity(0.5),
+          style: const TextStyle(
+            color: AppColors.textSecondary,
             fontSize: 11,
+            letterSpacing: 0.4,
           ),
         ),
         const SizedBox(width: 8),
@@ -355,7 +316,7 @@ class _InviteScreenState extends State<InviteScreen>
           style: const TextStyle(
             color: AppColors.textPrimary,
             fontSize: 14,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w700,
           ),
         ),
       ],
@@ -367,8 +328,8 @@ class _InviteScreenState extends State<InviteScreen>
       children: [
         Container(
           padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppColors.accent.withOpacity(0.08),
+          decoration: const BoxDecoration(
+            color: AppColors.accentSoft,
             shape: BoxShape.circle,
           ),
           child: Icon(icon, color: AppColors.accent, size: 18),
@@ -382,14 +343,15 @@ class _InviteScreenState extends State<InviteScreen>
               style: const TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 16,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w700,
               ),
             ),
             Text(
               label,
-              style: TextStyle(
-                color: AppColors.accent.withOpacity(0.4),
+              style: const TextStyle(
+                color: AppColors.textSecondary,
                 fontSize: 11,
+                letterSpacing: 0.4,
               ),
             ),
           ],
@@ -403,7 +365,7 @@ class _InviteScreenState extends State<InviteScreen>
       return Center(
         child: Text(
           AppLocalizations.of(context)?.noInviteData ?? 'No invite codes',
-          style: TextStyle(color: Colors.white.withOpacity(0.5)),
+          style: const TextStyle(color: AppColors.textSecondary),
         ),
       );
     }
@@ -411,11 +373,11 @@ class _InviteScreenState extends State<InviteScreen>
       children: codes.map((code) {
         return Container(
           margin: const EdgeInsets.only(bottom: 12),
-          padding: const EdgeInsets.all(12),
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
             color: AppColors.surface,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.accent.withOpacity(0.3)),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: AppColors.border, width: 1),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -435,9 +397,9 @@ class _InviteScreenState extends State<InviteScreen>
                   const SizedBox(height: 4),
                   Text(
                     '${AppLocalizations.of(context)?.createdAt ?? "创建于"}: ${_formatDate(code.createdAt)}',
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 11,
-                      color: Colors.white.withOpacity(0.4),
+                      color: AppColors.textSecondary,
                     ),
                   ),
                 ],
@@ -451,7 +413,8 @@ class _InviteScreenState extends State<InviteScreen>
                       final url = '$domain/#/register?code=${code.code}';
                       Share.share('Check out Flux VPN! $url');
                     },
-                    icon: const Icon(Icons.share, color: Colors.white70),
+                    icon: const Icon(Icons.share_rounded,
+                        color: AppColors.textSecondary, size: 18),
                   ),
                   IconButton(
                     onPressed: () {
@@ -460,7 +423,8 @@ class _InviteScreenState extends State<InviteScreen>
                         const SnackBar(content: Text('Copied to clipboard')),
                       );
                     },
-                    icon: const Icon(Icons.copy, color: Colors.white70),
+                    icon: const Icon(Icons.copy_rounded,
+                        color: AppColors.textSecondary, size: 18),
                   ),
                 ],
               ),
@@ -472,56 +436,30 @@ class _InviteScreenState extends State<InviteScreen>
   }
 
   Widget _buildGenerateButton() {
-    return AnimatedBuilder(
-      animation: _breatheAnim,
-      builder: (context, child) {
-        return GestureDetector(
-          onTap: _isGenerating ? null : _generateCode,
-          child: Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            decoration: BoxDecoration(
-              // Silver Gradient
-              gradient: const LinearGradient(
-                colors: [
-                  Color(0xFFE5E6EB), // Bright Silver
-                  Color(0xFF9CA3AF), // Metallic Grey
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.white.withValues(
-                    alpha: _breatheAnim.value * 0.3,
-                  ),
-                  blurRadius: 15 + (_breatheAnim.value * 10),
-                  spreadRadius: _breatheAnim.value * 2,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: child,
-          ),
-        );
-      },
-      child: Center(
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: ElevatedButton(
+        onPressed: _isGenerating ? null : _generateCode,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColors.accent,
+          foregroundColor: Colors.white,
+          disabledBackgroundColor: AppColors.accent.withValues(alpha: 0.5),
+          shape: const StadiumBorder(),
+          elevation: 0,
+        ),
         child: _isGenerating
             ? const SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.black, // Dark loader on silver
-                ),
+                child: FluxLoader(size: 20, color: Colors.white),
               )
             : Text(
                 AppLocalizations.of(context)?.generateCode ?? 'Generate Code',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black, // Black text on silver
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.4,
                 ),
               ),
       ),
@@ -535,7 +473,7 @@ class _InviteScreenState extends State<InviteScreen>
           padding: const EdgeInsets.all(24.0),
           child: Text(
             AppLocalizations.of(context)?.noInviteHistory ?? 'No records',
-            style: TextStyle(color: Colors.white.withOpacity(0.5)),
+            style: const TextStyle(color: AppColors.textSecondary),
           ),
         ),
       );
@@ -569,9 +507,9 @@ class _InviteScreenState extends State<InviteScreen>
                   const SizedBox(height: 4),
                   Text(
                     _formatDate(item.createdAt),
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 11,
-                      color: Colors.white.withOpacity(0.4),
+                      color: AppColors.textSecondary,
                     ),
                   ),
                 ],
@@ -614,15 +552,15 @@ class _InviteScreenState extends State<InviteScreen>
   Color _getCommissionStatusColor(int status) {
     switch (status) {
       case 0:
-        return Colors.orange;
+        return AppColors.warning;
       case 1:
-        return Colors.blue;
+        return AppColors.accentWarm;
       case 2:
-        return Colors.green;
+        return AppColors.success;
       case 3:
-        return Colors.red;
+        return AppColors.danger;
       default:
-        return Colors.grey;
+        return AppColors.textSecondary;
     }
   }
 }

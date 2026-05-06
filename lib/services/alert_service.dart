@@ -76,7 +76,7 @@ class AlertService {
           children: [
             Icon(
               isExhausted ? Icons.error_outline : Icons.warning_amber_rounded,
-              color: isExhausted ? Colors.red : Colors.orange,
+              color: isExhausted ? AppColors.danger : AppColors.warning,
             ),
             const SizedBox(width: 8),
             Text(
@@ -114,7 +114,7 @@ class AlertService {
           children: [
             Icon(
               isExpired ? Icons.error_outline : Icons.access_time,
-              color: isExpired ? Colors.red : Colors.orange,
+              color: isExpired ? AppColors.danger : AppColors.warning,
             ),
             const SizedBox(width: 8),
             Text(

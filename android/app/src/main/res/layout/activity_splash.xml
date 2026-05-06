@@ -3,9 +3,9 @@
     android:id="@+id/splash_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000">
+    android:background="#F5F3EF">
 
-    <!-- 流体光晕层1 -->
+    <!-- 暖光柔晕层1 -->
     <View
         android:id="@+id/glow1"
         android:layout_width="200dp"
@@ -14,7 +14,7 @@
         android:alpha="0"
         android:background="@drawable/splash_glow" />
 
-    <!-- 流体光晕层2 -->
+    <!-- 暖光柔晕层2 -->
     <View
         android:id="@+id/glow2"
         android:layout_width="180dp"
@@ -23,7 +23,7 @@
         android:alpha="0"
         android:background="@drawable/splash_glow2" />
 
-    <!-- 流体光晕层3 -->
+    <!-- 暖光柔晕层3 -->
     <View
         android:id="@+id/glow3"
         android:layout_width="160dp"
@@ -32,28 +32,28 @@
         android:alpha="0"
         android:background="@drawable/splash_glow" />
 
-    <!-- Logo -->
+    <!-- Logo 底层（深棕文字色） -->
     <TextView
         android:id="@+id/splash_logo_base"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Flux"
-        android:textColor="#C0C0C0"
+        android:textColor="@color/splash_text_primary"
         android:textSize="52sp"
-        android:fontFamily="sans-serif-light"
-        android:letterSpacing="0.2" />
+        android:fontFamily="serif"
+        android:letterSpacing="0.05" />
 
-    <!-- 流光层 -->
+    <!-- 流光层（珊瑚色） -->
     <TextView
         android:id="@+id/splash_logo_sheen"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Flux"
-        android:textColor="#FFFFFF"
+        android:textColor="@color/splash_text_accent"
         android:textSize="52sp"
-        android:fontFamily="sans-serif-light"
-        android:letterSpacing="0.2"
+        android:fontFamily="serif"
+        android:letterSpacing="0.05"
         android:alpha="0" />
 </FrameLayout>

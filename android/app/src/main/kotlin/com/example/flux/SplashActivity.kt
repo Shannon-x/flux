@@ -33,8 +33,8 @@ class SplashActivity : Activity() {
                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
         )
-        window.statusBarColor = android.graphics.Color.BLACK
-        window.navigationBarColor = android.graphics.Color.BLACK
+        window.statusBarColor = 0xFFF5F3EF.toInt()
+        window.navigationBarColor = 0xFFF5F3EF.toInt()
 
         val logo = findViewById<TextView>(R.id.splash_logo_base)
         val sheenLogo = findViewById<TextView>(R.id.splash_logo_sheen)

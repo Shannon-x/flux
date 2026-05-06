@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../config/brand_config.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../models/user_info.dart';
 import '../services/user_data_service.dart';
@@ -8,6 +9,7 @@ import '../services/api_config.dart';
 import '../services/alert_service.dart';
 import '../theme/app_colors.dart';
 import '../utils/formatters.dart';
+import '../utils/json_utils.dart';
 import '../widgets/animated_card.dart';
 import '../widgets/staggered_list.dart';
 import '../widgets/section_header.dart';
@@ -72,10 +74,10 @@ class _AccountScreenState extends State<AccountScreen> {
     if (!mounted) return;
 
     final usedBytes =
-        ((subscribeData['u'] ?? 0) as num).toInt() +
-        ((subscribeData['d'] ?? 0) as num).toInt();
-    final totalBytes = ((subscribeData['transfer_enable'] ?? 0) as num).toInt();
-    final expiredAt = ((subscribeData['expired_at'] ?? 0) as num).toInt();
+        JsonUtils.asInt(subscribeData['u']) +
+        JsonUtils.asInt(subscribeData['d']);
+    final totalBytes = JsonUtils.asInt(subscribeData['transfer_enable']);
+    final expiredAt = JsonUtils.asInt(subscribeData['expired_at']);
 
     if (totalBytes > 0 && expiredAt > 0) {
       await AlertService().checkAndShowAlert(
@@ -198,11 +200,11 @@ class _AccountScreenState extends State<AccountScreen> {
         });
 
         // Calculate usage if available
-        final upload = subInfo['u'] as int? ?? 0;
-        final download = subInfo['d'] as int? ?? 0;
-        final total = subInfo['transfer_enable'] as int? ?? 1;
+        final upload = JsonUtils.asInt(subInfo['u']);
+        final download = JsonUtils.asInt(subInfo['d']);
+        final total = JsonUtils.asInt(subInfo['transfer_enable'], defaultValue: 1);
         final used = upload + download;
-        final percent = (used / total).clamp(0.0, 1.0);
+        final percent = total > 0 ? (used / total).clamp(0.0, 1.0) : 0.0;
 
         return StaggeredList(
           padding: const EdgeInsets.only(
@@ -586,10 +588,16 @@ class _AccountScreenState extends State<AccountScreen> {
         backgroundColor: AppColors.surface,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Row(
-          children: const [
-            Icon(Icons.blur_on, color: AppColors.accent, size: 28),
-            SizedBox(width: 12),
-            Text('Flux', style: TextStyle(color: Colors.white)),
+          children: [
+            BrandConfig.buildLogo(size: 28, color: AppColors.accent),
+            const SizedBox(width: 12),
+            const Text(
+              BrandConfig.appName,
+              style: TextStyle(
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
           ],
         ),
         content: Column(
@@ -662,16 +670,18 @@ class _AccountScreenState extends State<AccountScreen> {
             Text(
               title,
               style: const TextStyle(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: 14,
-                fontWeight: FontWeight.bold,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.2,
               ),
             ),
             Text(
               subtitle,
-              style: TextStyle(
-                color: Colors.white.withOpacity(0.5),
+              style: const TextStyle(
+                color: AppColors.textSecondary,
                 fontSize: 11,
+                height: 1.6,
               ),
             ),
           ],

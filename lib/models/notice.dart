@@ -1,3 +1,5 @@
+import '../utils/json_utils.dart';
+
 class Notice {
   final int id;
   final String title;
@@ -15,11 +17,13 @@ class Notice {
 
   factory Notice.fromJson(Map<String, dynamic> json) {
     return Notice(
-      id: json['id'] as int,
-      title: json['title'] as String,
-      content: json['content'] as String,
-      imgUrl: json['img_url'] as String?,
-      createdAt: DateTime.fromMillisecondsSinceEpoch((json['created_at'] as int) * 1000),
+      id: JsonUtils.asInt(json['id']),
+      title: JsonUtils.asString(json['title']),
+      content: JsonUtils.asString(json['content']),
+      imgUrl: json['img_url'] is String ? json['img_url'] as String : null,
+      createdAt: DateTime.fromMillisecondsSinceEpoch(
+        JsonUtils.asInt(json['created_at']) * 1000,
+      ),
     );
   }
 }

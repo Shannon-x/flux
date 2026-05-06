@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../config/brand_config.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../services/api_config.dart';
 import '../services/v2board_api.dart';
@@ -9,6 +10,7 @@ import '../theme/app_colors.dart';
 import '../widgets/gradient_card.dart';
 import '../widgets/animated_background.dart';
 import '../widgets/flux_loader.dart';
+import '../widgets/warm_context_menu.dart';
 
 enum AuthMode { login, register, reset }
 
@@ -243,11 +245,11 @@ class _AuthScreenState extends State<AuthScreen>
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light.copyWith(
-        statusBarColor: Colors.black,
-        statusBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.black,
-        systemNavigationBarIconBrightness: Brightness.light,
+      value: const SystemUiOverlayStyle(
+        statusBarColor: AppColors.background,
+        statusBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: AppColors.background,
+        systemNavigationBarIconBrightness: Brightness.dark,
       ),
       child: Scaffold(
         backgroundColor: AppColors.background, // 确保纯黑背景
@@ -277,7 +279,10 @@ class _AuthScreenState extends State<AuthScreen>
                     constraints: BoxConstraints(
                       minHeight: constraints.maxHeight,
                     ),
-                    child: Padding(
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 420),
+                        child: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 24,
                         vertical: 24,
@@ -296,8 +301,7 @@ class _AuthScreenState extends State<AuthScreen>
                             duration: const Duration(milliseconds: 200),
                             width: isKeyboardOpen ? 32 : 48,
                             height: isKeyboardOpen ? 32 : 48,
-                            child: Icon(
-                              Icons.blur_on,
+                            child: BrandConfig.buildLogo(
                               size: isKeyboardOpen ? 32 : 48,
                               color: AppColors.accent,
                             ),
@@ -309,14 +313,13 @@ class _AuthScreenState extends State<AuthScreen>
                           ),
                           AnimatedDefaultTextStyle(
                             duration: const Duration(milliseconds: 200),
-                            style: TextStyle(
-                              fontFamily: 'Roboto',
+                            style: BrandConfig.nameStyle(
                               fontSize: isKeyboardOpen ? 24 : 32,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w700,
                               color: AppColors.textPrimary,
-                              letterSpacing: 2,
+                              letterSpacing: 0.5,
                             ),
-                            child: const Text('Flux'),
+                            child: const Text(BrandConfig.appName),
                           ),
                           AnimatedSize(
                             duration: const Duration(milliseconds: 200),
@@ -437,14 +440,10 @@ class _AuthScreenState extends State<AuthScreen>
                                       onPressed: _loading ? null : _submit,
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: AppColors.accent,
-                                        foregroundColor: Colors.black,
+                                        foregroundColor: Colors.white,
                                         elevation: 0,
                                         shadowColor: Colors.transparent,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            16,
-                                          ),
-                                        ),
+                                        shape: const StadiumBorder(),
                                       ),
                                       child: _loading
                                           ? const SizedBox(
@@ -452,7 +451,7 @@ class _AuthScreenState extends State<AuthScreen>
                                               height: 24,
                                               child: FluxLoader(
                                                 size: 24,
-                                                color: Colors.black,
+                                                color: Colors.white,
                                               ),
                                             )
                                           : Text(
@@ -559,6 +558,8 @@ class _AuthScreenState extends State<AuthScreen>
                         ],
                       ),
                     ),
+                      ),
+                    ),
                   ),
                 );
               },
@@ -651,6 +652,7 @@ class _AuthScreenState extends State<AuthScreen>
         controller: controller,
         obscureText: obscureText,
         keyboardType: keyboardType,
+        contextMenuBuilder: warmEditableContextMenuBuilder,
         style: const TextStyle(color: AppColors.textPrimary),
         decoration: InputDecoration(
           hintText: label,

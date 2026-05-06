@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-
+import '../theme/app_colors.dart';
 import 'flux_loader.dart';
 
-/// 操作按钮组件
+/// 暖调辅助按钮:浮白底 + 描边胶囊,常用于卡片内的小动作。
 class ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -19,68 +19,41 @@ class ActionButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final enabled = onPressed != null && !isLoading;
+    final textColor = enabled ? AppColors.textPrimary : AppColors.textSecondary;
+    final iconColor = enabled ? AppColors.accent : AppColors.textSecondary;
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(999),
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: onPressed != null
-                  ? [
-                      Colors.white.withValues(alpha: 0.15),
-                      Colors.white.withValues(alpha: 0.08),
-                    ]
-                  : [
-                      Colors.white.withValues(alpha: 0.05),
-                      Colors.white.withValues(alpha: 0.02),
-                    ],
-            ),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.2),
-              width: 1,
-            ),
-            boxShadow: onPressed != null
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.2),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    ),
-                  ]
-                : null,
+            color: AppColors.surface,
+            borderRadius: BorderRadius.circular(999),
+            border: Border.all(color: AppColors.border, width: 1),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               if (isLoading)
-                const SizedBox(
+                SizedBox(
                   width: 16,
                   height: 16,
-                  child: FluxLoader(size: 20, color: Colors.white),
+                  child: FluxLoader(size: 18, color: iconColor),
                 )
               else
-                Icon(
-                  icon,
-                  size: 18,
-                  color: onPressed != null
-                      ? Colors.white.withValues(alpha: 0.87)
-                      : Colors.white38,
-                ),
+                Icon(icon, size: 16, color: iconColor),
               const SizedBox(width: 8),
               Text(
                 label,
                 style: TextStyle(
-                  color: onPressed != null
-                      ? Colors.white.withValues(alpha: 0.87)
-                      : Colors.white38,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
+                  color: textColor,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.2,
                 ),
               ),
             ],
@@ -90,4 +63,3 @@ class ActionButton extends StatelessWidget {
     );
   }
 }
-

@@ -1,70 +1,47 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
+import '../config/brand_config.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../theme/app_colors.dart';
 
-/// 桌面端侧边导航栏 - 增加毛玻璃效果
+/// 暖调桌面侧栏:浮白底 + 衬线 Logo + 胶囊形选中态。
 class DesktopNav extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
-  
+
   const DesktopNav({
     super.key,
     required this.selectedIndex,
     required this.onDestinationSelected,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 220,
-      decoration: BoxDecoration(
+      width: 232,
+      decoration: const BoxDecoration(
         color: AppColors.surface,
         border: Border(
-          right: BorderSide(
-            color: AppColors.border,
-            width: 1,
-          ),
+          right: BorderSide(color: AppColors.border, width: 1),
         ),
       ),
       child: Column(
         children: [
-          // Logo 区域
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          // Logo 区域 —— 衬线大字,品牌优先
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 28, 24, 24),
             child: Row(
               children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.accent.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.blur_on,
-                    color: AppColors.accent,
-                    size: 28,
-                  ),
-                ),
+                BrandConfig.buildLogoBadge(iconSize: 22, padding: 8),
                 const SizedBox(width: 12),
-                const Text(
-                  'Flux',
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1,
-                  ),
-                ),
+                BrandConfig.buildName(fontSize: 24),
               ],
             ),
           ),
-          
+
           const Divider(color: AppColors.border, height: 1),
-          
+
           const SizedBox(height: 16),
-          
-          // 导航项
+
           _buildNavItem(
             index: 0,
             icon: Icons.power_settings_new_rounded,
@@ -80,19 +57,18 @@ class DesktopNav extends StatelessWidget {
             icon: Icons.account_circle_outlined,
             label: AppLocalizations.of(context)?.accountInfo ?? '账户信息',
           ),
-          
+
           const Spacer(),
-          
-          // 底部版本区
+
           Padding(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
             child: Text(
-              'FLUX v1.0.0',
-              style: const TextStyle(
-                color: AppColors.textSecondary,
+              'FLUX · v1.0.0',
+              style: TextStyle(
+                color: AppColors.textSecondary.withValues(alpha: 0.7),
                 fontSize: 10,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.5,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 1.8,
               ),
             ),
           ),
@@ -100,51 +76,47 @@ class DesktopNav extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildNavItem({
     required int index,
     required IconData icon,
     required String label,
   }) {
     final isSelected = selectedIndex == index;
-    
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: () => onDestinationSelected(index),
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(999),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
             decoration: BoxDecoration(
-              color: isSelected 
-                  ? AppColors.accent.withOpacity(0.2)
-                  : Colors.transparent,
-              borderRadius: BorderRadius.circular(14),
-              boxShadow: isSelected ? [
-                BoxShadow(
-                  color: AppColors.accent.withOpacity(0.1),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                )
-              ] : [],
+              color: isSelected ? AppColors.accentSoft : Colors.transparent,
+              borderRadius: BorderRadius.circular(999),
             ),
             child: Row(
               children: [
                 Icon(
                   icon,
-                  color: isSelected ? AppColors.accent : Colors.white60,
-                  size: 20,
+                  color: isSelected
+                      ? AppColors.accent
+                      : AppColors.textSecondary,
+                  size: 18,
                 ),
-                const SizedBox(width: 14),
+                const SizedBox(width: 12),
                 Text(
                   label,
                   style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.white60,
+                    color: isSelected
+                        ? AppColors.accent
+                        : AppColors.textPrimary,
                     fontSize: 14,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                    letterSpacing: 0.2,
                   ),
                 ),
               ],

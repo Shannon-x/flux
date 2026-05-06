@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 纯黑背景 + 微妙银灰光晕（无蓝调） -->
+<!-- 奶白色基底 + 极淡的暖调径向高光 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android">
     <gradient
         android:centerX="0.5"
         android:centerY="0.45"
-        android:endColor="#000000"
+        android:endColor="#F5F3EF"
         android:gradientRadius="400dp"
-        android:startColor="#1A1A1A"
+        android:startColor="#FAF7F2"
         android:type="radial" />
 </shape>

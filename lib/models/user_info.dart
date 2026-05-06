@@ -1,3 +1,5 @@
+import '../utils/json_utils.dart';
+
 class UserInfo {
   UserInfo({
     required this.email,
@@ -19,13 +21,13 @@ class UserInfo {
 
   factory UserInfo.fromJson(Map<String, dynamic> json) {
     return UserInfo(
-      email: json['email'] ?? '',
-      transferEnable: json['transfer_enable'] ?? 0,
-      expiredAt: json['expired_at'] ?? 0,
-      balance: json['balance'] ?? 0,
-      planId: json['plan_id'] ?? 0,
-      avatarUrl: json['avatar_url'],
-      uuid: json['uuid'],
+      email: JsonUtils.asString(json['email']),
+      transferEnable: JsonUtils.asInt(json['transfer_enable']),
+      expiredAt: JsonUtils.asInt(json['expired_at']),
+      balance: JsonUtils.asInt(json['balance']),
+      planId: JsonUtils.asInt(json['plan_id']),
+      avatarUrl: json['avatar_url'] is String ? json['avatar_url'] as String : null,
+      uuid: json['uuid'] is String ? json['uuid'] as String : null,
     );
   }
 }

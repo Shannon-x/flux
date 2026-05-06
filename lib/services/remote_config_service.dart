@@ -23,7 +23,7 @@ class RemoteConfigService {
 
   /// 默认 API 域名（当 OSS 配置获取失败时使用）
   /// TODO: Replace with your V2Board API domain
-  static const String _defaultDomain = 'https://your-api-domain.com';
+  static const String _defaultDomain = 'https://www.isufe.me';
 
   /// 配置缓存有效期（小时）
   static const int _cacheValidHours = 6;

@@ -1,13 +1,15 @@
 import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../models/server_node.dart';
+import '../theme/app_colors.dart';
 import '../utils/node_utils.dart';
 import '../services/v2ray_service.dart';
 import 'connection_button.dart' show ConnectionButtonStatus;
 
-/// 主页连接视图 - 中心区域
+/// 暖调主页连接视图:奶白底 + 珊瑚胶囊按钮 + 浮白节点条。
 class HomeConnectionView extends StatefulWidget {
   final ConnectionButtonStatus status;
   final VoidCallback? onConnectTap;
@@ -41,7 +43,6 @@ class _HomeConnectionViewState extends State<HomeConnectionView>
     if (widget.status == ConnectionButtonStatus.connecting || widget.isLoading) {
       _loopController.repeat();
     }
-    // 恢复 Tun 模式状态
     V2rayService().loadTunState();
   }
 
@@ -68,17 +69,11 @@ class _HomeConnectionViewState extends State<HomeConnectionView>
     super.dispose();
   }
 
-  void _handleTapDown(TapDownDetails details) {
-    setState(() => _buttonScale = 0.96);
-  }
-
-  void _handleTapUp(TapUpDetails details) {
-    setState(() => _buttonScale = 1.0);
-  }
-
-  void _handleTapCancel() {
-    setState(() => _buttonScale = 1.0);
-  }
+  void _handleTapDown(TapDownDetails details) =>
+      setState(() => _buttonScale = 0.96);
+  void _handleTapUp(TapUpDetails details) =>
+      setState(() => _buttonScale = 1.0);
+  void _handleTapCancel() => setState(() => _buttonScale = 1.0);
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +83,7 @@ class _HomeConnectionViewState extends State<HomeConnectionView>
     final style = widget.isLoading &&
             widget.status == ConnectionButtonStatus.disconnected
         ? _StatusStyle(
-            accent: const Color(0xFFB8C0CC),
+            accent: AppColors.textSecondary,
             action: AppLocalizations.of(context)?.syncing ?? 'Syncing',
           )
         : _statusStyle(context, widget.status);
@@ -104,12 +99,28 @@ class _HomeConnectionViewState extends State<HomeConnectionView>
         reduceMotion ? Duration.zero : const Duration(milliseconds: 220);
     final textDuration =
         reduceMotion ? Duration.zero : const Duration(milliseconds: 180);
+
+    final isConnected = widget.status == ConnectionButtonStatus.connected;
+    final isError = widget.status == ConnectionButtonStatus.error;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final buttonWidth =
             (constraints.maxWidth * 0.68).clamp(220.0, 320.0);
         final indicatorTarget =
             widget.status == ConnectionButtonStatus.connecting ? 1.0 : 0.0;
+
+        // 主按钮的填充色:连接态珊瑚 / 其他态浮白
+        final buttonFill = isConnected
+            ? AppColors.accent
+            : (isError ? AppColors.danger : AppColors.surface);
+        final buttonTextColor = isConnected || isError
+            ? Colors.white
+            : AppColors.textPrimary;
+        final buttonBorderColor = isConnected || isError
+            ? Colors.transparent
+            : AppColors.border;
+
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -133,16 +144,15 @@ class _HomeConnectionViewState extends State<HomeConnectionView>
                       width: buttonWidth,
                       height: 64,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(18),
-                        color: _surfaceColor(widget.status),
-                        border: Border.all(
-                          color: style.accent.withValues(alpha: isBusy ? 0.25 : 0.45),
-                          width: 1,
-                        ),
+                        borderRadius: BorderRadius.circular(999),
+                        color: buttonFill,
+                        border: Border.all(color: buttonBorderColor, width: 1),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(alpha: 0.4),
-                            blurRadius: 18,
+                            color: isConnected
+                                ? AppColors.accent.withValues(alpha: 0.22)
+                                : AppColors.shadowFaint,
+                            blurRadius: 24,
                             offset: const Offset(0, 12),
                           ),
                         ],
@@ -185,8 +195,12 @@ class _HomeConnectionViewState extends State<HomeConnectionView>
                                     child: child,
                                   ),
                                 ),
-                                child:
-                                    _buildIndicator(style, isBusy, reduceMotion),
+                                child: _buildIndicator(
+                                  style,
+                                  isBusy,
+                                  reduceMotion,
+                                  buttonTextColor,
+                                ),
                               ),
                               const SizedBox(width: 14),
                               AnimatedSwitcher(
@@ -205,11 +219,11 @@ class _HomeConnectionViewState extends State<HomeConnectionView>
                                 child: Text(
                                   style.action,
                                   key: ValueKey(style.action),
-                                  style: const TextStyle(
-                                    fontSize: 16,
+                                  style: TextStyle(
+                                    fontSize: 15,
                                     fontWeight: FontWeight.w600,
-                                    letterSpacing: 0.8,
-                                    color: Colors.white,
+                                    letterSpacing: 0.6,
+                                    color: buttonTextColor,
                                   ),
                                 ),
                               ),
@@ -223,7 +237,7 @@ class _HomeConnectionViewState extends State<HomeConnectionView>
               ),
             ),
             const SizedBox(height: 18),
-            // Node Info
+            // 节点信息胶囊
             SizedBox(
               height: 52,
               child: AnimatedOpacity(
@@ -236,14 +250,14 @@ class _HomeConnectionViewState extends State<HomeConnectionView>
                     child: widget.selectedNode != null
                         ? Container(
                             padding: const EdgeInsets.symmetric(
-                              horizontal: 14,
+                              horizontal: 16,
                               vertical: 10,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF0B0F16),
-                              borderRadius: BorderRadius.circular(14),
+                              color: AppColors.surface,
+                              borderRadius: BorderRadius.circular(999),
                               border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.08),
+                                color: AppColors.border,
                                 width: 1,
                               ),
                             ),
@@ -251,20 +265,20 @@ class _HomeConnectionViewState extends State<HomeConnectionView>
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 const Icon(
-                                  Icons.public,
+                                  Icons.public_rounded,
                                   size: 16,
-                                  color: Color(0xFFCDD2DB),
+                                  color: AppColors.accent,
                                 ),
                                 const SizedBox(width: 8),
                                 Text(
                                   NodeUtils.extractCountry(
-                                      widget.selectedNode!.name,
-                                      context: context,
+                                    widget.selectedNode!.name,
+                                    context: context,
                                   ),
                                   style: const TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.w600,
-                                    color: Color(0xFFD7DCE5),
+                                    color: AppColors.textPrimary,
                                     letterSpacing: 0.2,
                                   ),
                                 ),
@@ -273,11 +287,11 @@ class _HomeConnectionViewState extends State<HomeConnectionView>
                                   Container(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 8,
-                                      vertical: 4,
+                                      vertical: 3,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: const Color(0xFF1A212E),
-                                      borderRadius: BorderRadius.circular(8),
+                                      color: AppColors.surfaceAlt,
+                                      borderRadius: BorderRadius.circular(999),
                                     ),
                                     child: Text(
                                       '${widget.selectedNode!.latency}ms',
@@ -299,8 +313,7 @@ class _HomeConnectionViewState extends State<HomeConnectionView>
                 ),
               ),
             ),
-            
-            // Proxy Mode Selector
+
             const SizedBox(height: 16),
             _buildProxyModeSelector(context),
           ],
@@ -310,31 +323,31 @@ class _HomeConnectionViewState extends State<HomeConnectionView>
   }
 
   Widget _buildProxyModeSelector(BuildContext context) {
-    // Current assumption (sync with V2rayService later if observable)
-    // For now we use a local state that defaults to what V2rayService has
-    // Since V2rayService is singleton, we can read from it but it doesn't notify changes easily without stream
-    // We will just manage it here for the view.
-    
     return GestureDetector(
       onTap: () => _showProxySettingsDialog(context),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.05),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.white.withValues(alpha: 0.05)),
+          color: AppColors.surfaceAlt,
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: AppColors.border, width: 1),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.tune_rounded, size: 14, color: Colors.white.withValues(alpha: 0.7)),
+            const Icon(
+              Icons.tune_rounded,
+              size: 14,
+              color: AppColors.textSecondary,
+            ),
             const SizedBox(width: 8),
             Text(
               AppLocalizations.of(context)?.proxySettings ?? 'Proxy Mode',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
-                color: Colors.white.withValues(alpha: 0.7),
+                color: AppColors.textSecondary,
                 fontWeight: FontWeight.w500,
+                letterSpacing: 0.3,
               ),
             ),
           ],
@@ -353,62 +366,97 @@ class _HomeConnectionViewState extends State<HomeConnectionView>
         return StatefulBuilder(
           builder: (context, setState) {
             return AlertDialog(
-              backgroundColor: const Color(0xFF1A1F29),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-              title: Text(AppLocalizations.of(context)?.proxySettings ?? 'Proxy Settings', style: const TextStyle(color: Colors.white)),
+              backgroundColor: AppColors.surface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              title: Text(
+                AppLocalizations.of(context)?.proxySettings ?? 'Proxy Settings',
+                style: GoogleFonts.notoSerifSc(
+                  color: AppColors.textPrimary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 18,
+                ),
+              ),
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                   Text(
-                     AppLocalizations.of(context)?.routingMode ?? 'Routing Mode',
-                     style: const TextStyle(color: Color(0xFF8FA3BF), fontSize: 13, fontWeight: FontWeight.bold),
-                   ),
-                   const SizedBox(height: 8),
-                   _buildRadioOption(
-                     title: AppLocalizations.of(context)?.ruleMode ?? 'Rule Mode',
-                     value: ProxyRoutingMode.rule,
-                     groupValue: routingMode,
-                     onChanged: (val) {
-                       setState(() => routingMode = val);
-                       V2rayService().setRoutingMode(val);
-                     },
-                   ),
-                   _buildRadioOption(
-                     title: AppLocalizations.of(context)?.globalMode ?? 'Global Mode',
-                     value: ProxyRoutingMode.global,
-                     groupValue: routingMode,
-                     onChanged: (val) {
-                       setState(() => routingMode = val);
-                       V2rayService().setRoutingMode(val);
-                     },
-                   ),
-                   if (!Platform.isIOS && !Platform.isAndroid) ...[
-                     const Divider(color: Color(0xFF2B3240)),
-                     const SizedBox(height: 8),
-                     SwitchListTile(
-                       title: Text(AppLocalizations.of(context)?.tunMode ?? 'Tun Mode', style: const TextStyle(color: Colors.white)),
-                       subtitle: Text('全局流量代理', style: const TextStyle(color: Color(0xFF8FA3BF), fontSize: 11)),
-                       value: tunEnabled,
-                       activeColor: const Color(0xFF00D26A),
-                       activeTrackColor: const Color(0xFF00D26A).withOpacity(0.4),
-                       inactiveThumbColor: Colors.grey[400], inactiveTrackColor: const Color(0xFF2B3240),
-                       onChanged: (val) {
-                         setState(() => tunEnabled = val);
-                         V2rayService().setTunEnabled(val);
-                       },
-                     ),
-                   ],
+                  Text(
+                    AppLocalizations.of(context)?.routingMode ?? 'Routing Mode',
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: 1,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  _buildRadioOption(
+                    title: AppLocalizations.of(context)?.ruleMode ?? 'Rule Mode',
+                    value: ProxyRoutingMode.rule,
+                    groupValue: routingMode,
+                    onChanged: (val) {
+                      setState(() => routingMode = val);
+                      V2rayService().setRoutingMode(val);
+                    },
+                  ),
+                  _buildRadioOption(
+                    title: AppLocalizations.of(context)?.globalMode ??
+                        'Global Mode',
+                    value: ProxyRoutingMode.global,
+                    groupValue: routingMode,
+                    onChanged: (val) {
+                      setState(() => routingMode = val);
+                      V2rayService().setRoutingMode(val);
+                    },
+                  ),
+                  if (!Platform.isIOS && !Platform.isAndroid) ...[
+                    const Divider(color: AppColors.border, height: 24),
+                    SwitchListTile(
+                      title: Text(
+                        AppLocalizations.of(context)?.tunMode ?? 'Tun Mode',
+                        style: const TextStyle(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      subtitle: const Text(
+                        '全局流量代理',
+                        style: TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 11,
+                        ),
+                      ),
+                      value: tunEnabled,
+                      activeColor: AppColors.accent,
+                      activeTrackColor:
+                          AppColors.accent.withValues(alpha: 0.4),
+                      inactiveThumbColor: AppColors.textSecondary,
+                      inactiveTrackColor: AppColors.border,
+                      contentPadding: EdgeInsets.zero,
+                      onChanged: (val) {
+                        setState(() => tunEnabled = val);
+                        V2rayService().setTunEnabled(val);
+                      },
+                    ),
+                  ],
                 ],
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context),
-                  child: Text(AppLocalizations.of(context)?.close ?? 'Done', style: const TextStyle(color: Color(0xFF4D8EFF))),
+                  child: Text(
+                    AppLocalizations.of(context)?.close ?? 'Done',
+                    style: const TextStyle(
+                      color: AppColors.accent,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ],
             );
-          }
+          },
         );
       },
     );
@@ -423,29 +471,36 @@ class _HomeConnectionViewState extends State<HomeConnectionView>
     final isSelected = value == groupValue;
     return GestureDetector(
       onTap: () => onChanged(value),
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
         margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF4D8EFF).withOpacity(0.15) : Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
+          color: isSelected ? AppColors.accentSoft : Colors.transparent,
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isSelected ? const Color(0xFF4D8EFF).withOpacity(0.5) : Colors.white.withOpacity(0.1),
+            color: isSelected ? AppColors.accent : AppColors.border,
           ),
         ),
         child: Row(
           children: [
             Icon(
-              isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-              color: isSelected ? const Color(0xFF4D8EFF) : Colors.white.withOpacity(0.5),
+              isSelected
+                  ? Icons.radio_button_checked
+                  : Icons.radio_button_unchecked,
+              color:
+                  isSelected ? AppColors.accent : AppColors.textSecondary,
               size: 18,
             ),
             const SizedBox(width: 12),
             Text(
               title,
               style: TextStyle(
-                color: isSelected ? Colors.white : Colors.white.withOpacity(0.8),
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                color:
+                    isSelected ? AppColors.accent : AppColors.textPrimary,
+                fontWeight:
+                    isSelected ? FontWeight.w600 : FontWeight.w500,
+                letterSpacing: 0.2,
               ),
             ),
           ],
@@ -473,35 +528,39 @@ class _HomeConnectionViewState extends State<HomeConnectionView>
     switch (status) {
       case ConnectionButtonStatus.connected:
         return _StatusStyle(
-          accent: const Color(0xFFB7C1CD),
+          accent: Colors.white,
           action: l10n?.disconnect ?? 'Disconnect',
         );
       case ConnectionButtonStatus.connecting:
         return _StatusStyle(
-          accent: const Color(0xFF8FA3BF),
+          accent: AppColors.accentWarm,
           action: l10n?.connecting ?? 'Connecting',
         );
       case ConnectionButtonStatus.error:
         return _StatusStyle(
-          accent: const Color(0xFFC19A9A),
+          accent: Colors.white,
           action: l10n?.retry ?? 'Retry',
         );
       default:
         return _StatusStyle(
-          accent: const Color(0xFFAEB6C4),
+          accent: AppColors.accent,
           action: l10n?.connect ?? 'Connect',
         );
     }
   }
 
   Color _latencyColor(int latency) {
-    if (latency < 100) return const Color(0xFF9FD1FF);
-    if (latency < 300) return const Color(0xFFC9B77D);
-    return const Color(0xFFC18C8C);
+    if (latency < 100) return AppColors.success;
+    if (latency < 300) return AppColors.warning;
+    return AppColors.danger;
   }
 
   Widget _buildIndicator(
-      _StatusStyle style, bool isBusy, bool reduceMotion) {
+    _StatusStyle style,
+    bool isBusy,
+    bool reduceMotion,
+    Color textColor,
+  ) {
     final showCheck = widget.status == ConnectionButtonStatus.connected;
     final base = AnimatedContainer(
       key: ValueKey(showCheck),
@@ -509,14 +568,14 @@ class _HomeConnectionViewState extends State<HomeConnectionView>
       width: showCheck ? 18 : 12,
       height: showCheck ? 18 : 12,
       decoration: BoxDecoration(
-        color: style.accent,
+        color: showCheck ? Colors.white : style.accent,
         borderRadius: BorderRadius.circular(showCheck ? 6 : 999),
       ),
       child: showCheck
-          ? const Icon(
+          ? Icon(
               Icons.check_rounded,
               size: 14,
-              color: Colors.black,
+              color: AppColors.accent,
             )
           : null,
     );
@@ -540,61 +599,34 @@ class _HomeConnectionViewState extends State<HomeConnectionView>
   Widget _buildBusyEffects(_StatusStyle style, double buttonWidth) {
     return Positioned.fill(
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(999),
         child: AnimatedBuilder(
           animation: _loopController,
           builder: (context, child) {
             final t = _loopController.value;
             final sweepOffset = (t * 2 - 1) * buttonWidth;
-            final glow = 0.03 + 0.02 * math.sin(t * math.pi * 2);
-            return Stack(
-              children: [
-                Opacity(
-                  opacity: glow,
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: style.accent,
-                    ),
+            return Transform.translate(
+              offset: Offset(sweepOffset, 0),
+              child: Container(
+                width: 90,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.centerLeft,
+                    end: Alignment.centerRight,
+                    colors: [
+                      Colors.transparent,
+                      AppColors.accent.withValues(alpha: 0.10),
+                      Colors.transparent,
+                    ],
                   ),
                 ),
-                Transform.translate(
-                  offset: Offset(sweepOffset, 0),
-                  child: Container(
-                    width: 90,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                        colors: [
-                          Colors.transparent,
-                          style.accent.withValues(alpha: 0.12),
-                          Colors.transparent,
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             );
           },
         ),
       ),
     );
   }
-
-  Color _surfaceColor(ConnectionButtonStatus status) {
-    switch (status) {
-      case ConnectionButtonStatus.connected:
-        return const Color(0xFF0C1016);
-      case ConnectionButtonStatus.connecting:
-        return const Color(0xFF0D1118);
-      case ConnectionButtonStatus.error:
-        return const Color(0xFF151015);
-      default:
-        return const Color(0xFF0E1320);
-    }
-  }
-
 }
 
 class _StatusStyle {

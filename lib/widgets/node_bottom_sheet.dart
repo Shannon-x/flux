@@ -58,9 +58,9 @@ class _NodeBottomSheetState extends State<NodeBottomSheet> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.3),
-            blurRadius: 20,
-            offset: const Offset(0, -5),
+            color: AppColors.shadowSoft,
+            blurRadius: 24,
+            offset: const Offset(0, -8),
           ),
         ],
       ),
@@ -114,7 +114,7 @@ class _NodeBottomSheetState extends State<NodeBottomSheet> {
             ),
           ),
 
-          const Divider(height: 1, color: Colors.white10),
+          const Divider(height: 1, color: AppColors.border),
 
           // 节点列表
           Flexible(
@@ -166,7 +166,7 @@ class _NodeBottomSheetState extends State<NodeBottomSheet> {
                                   : null,
                             ),
                             child: isSelected
-                                ? const Icon(Icons.check, size: 14, color: Colors.black)
+                                ? const Icon(Icons.check, size: 14, color: Colors.white)
                                 : null,
                           ),
                           const SizedBox(width: 16),

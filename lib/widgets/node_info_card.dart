@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import '../models/server_node.dart';
+import '../theme/app_colors.dart';
 import '../utils/node_utils.dart';
 
-/// 节点信息卡片组件
+/// 暖调节点信息卡片:浮白底 + 珊瑚强调 + 延迟语义色。
 class NodeInfoCard extends StatelessWidget {
   final ServerNode node;
 
@@ -11,31 +12,27 @@ class NodeInfoCard extends StatelessWidget {
     required this.node,
   });
 
+  Color _latencyColor(int latency) {
+    if (latency < 100) return AppColors.success;
+    if (latency < 300) return AppColors.warning;
+    return AppColors.danger;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
       child: Container(
-        padding: const EdgeInsets.all(16), // 增加内边距从14到16
+        padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              Colors.white.withValues(alpha: 0.12),
-              Colors.white.withValues(alpha: 0.06),
-            ],
-          ),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Colors.greenAccent.withValues(alpha: 0.3),
-            width: 1.5,
-          ),
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColors.border, width: 1),
           boxShadow: [
             BoxShadow(
-              color: Colors.greenAccent.withValues(alpha: 0.1),
-              blurRadius: 12,
-              offset: const Offset(0, 4),
+              color: AppColors.shadowFaint,
+              blurRadius: 18,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
@@ -46,15 +43,15 @@ class NodeInfoCard extends StatelessWidget {
             Row(
               children: [
                 Container(
-                  padding: const EdgeInsets.all(6),
+                  padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.greenAccent.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.accentSoft,
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(
-                    Icons.location_on,
-                    color: Colors.greenAccent,
-                    size: 20,
+                    Icons.location_on_rounded,
+                    color: AppColors.accent,
+                    size: 18,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -62,9 +59,10 @@ class NodeInfoCard extends StatelessWidget {
                   child: Text(
                     NodeUtils.extractCountry(node.name, context: context),
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color: Colors.white, // 提高对比度，移除opacity
+                      color: AppColors.textPrimary,
+                      letterSpacing: 0.2,
                     ),
                   ),
                 ),
@@ -76,25 +74,18 @@ class NodeInfoCard extends StatelessWidget {
                 child: Row(
                   children: [
                     Icon(
-                      Icons.speed,
+                      Icons.speed_rounded,
                       size: 16,
-                      color: node.latency! < 100
-                          ? Colors.greenAccent
-                          : node.latency! < 300
-                              ? Colors.orangeAccent
-                              : Colors.redAccent,
+                      color: _latencyColor(node.latency!),
                     ),
                     const SizedBox(width: 8),
                     Text(
                       '${node.latency}ms',
                       style: TextStyle(
-                        fontSize: 14,
-                        color: node.latency! < 100
-                            ? Colors.greenAccent
-                            : node.latency! < 300
-                                ? Colors.orangeAccent
-                                : Colors.redAccent,
+                        fontSize: 13,
+                        color: _latencyColor(node.latency!),
                         fontWeight: FontWeight.w600,
+                        letterSpacing: 0.3,
                       ),
                     ),
                   ],
@@ -106,4 +97,3 @@ class NodeInfoCard extends StatelessWidget {
     );
   }
 }
-

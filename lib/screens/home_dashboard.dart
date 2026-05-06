@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:math' as math;
-import 'dart:ui'; // Required for ImageFilter
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../l10n/generated/app_localizations.dart';
@@ -237,17 +236,18 @@ class _HomeDashboardState extends State<HomeDashboard>
             const SizedBox(width: 8),
             Text(
               l10n?.proxySettings ?? 'Proxy Mode',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 13,
-                color: Colors.white.withOpacity(0.8),
+                color: AppColors.textPrimary,
                 fontWeight: FontWeight.w500,
+                letterSpacing: 0.3,
               ),
             ),
             const SizedBox(width: 4),
-            Icon(
+            const Icon(
               Icons.keyboard_arrow_down_rounded,
               size: 16,
-              color: Colors.white.withOpacity(0.5),
+              color: AppColors.textSecondary,
             ),
           ],
         ),
@@ -263,7 +263,7 @@ class _HomeDashboardState extends State<HomeDashboard>
       context: context,
       barrierDismissible: true,
       barrierLabel: 'Dismiss',
-      barrierColor: Colors.black.withOpacity(0.7),
+      barrierColor: AppColors.textPrimary.withValues(alpha: 0.35),
       transitionDuration: const Duration(milliseconds: 280),
       pageBuilder: (context, animation, secondaryAnimation) => const SizedBox(),
       transitionBuilder: (context, animation, secondaryAnimation, child) {
@@ -292,9 +292,9 @@ class _HomeDashboardState extends State<HomeDashboard>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.5),
+                            color: AppColors.shadowSoft,
                             blurRadius: 40,
-                            offset: const Offset(0, 20),
+                            offset: const Offset(0, 18),
                           ),
                         ],
                       ),
@@ -497,15 +497,11 @@ class _HomeDashboardState extends State<HomeDashboard>
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: isSelected
-              ? AppColors.accent.withOpacity(0.15)
-              : Colors.white.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(16),
+          color: isSelected ? AppColors.accentSoft : AppColors.surface,
+          borderRadius: BorderRadius.circular(18),
           border: Border.all(
-            color: isSelected
-                ? AppColors.accent.withOpacity(0.5)
-                : Colors.white.withOpacity(0.1),
-            width: 1.5,
+            color: isSelected ? AppColors.accent : AppColors.border,
+            width: 1,
           ),
         ),
         child: Row(
@@ -513,16 +509,12 @@ class _HomeDashboardState extends State<HomeDashboard>
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColors.accent.withOpacity(0.2)
-                    : Colors.white.withOpacity(0.05),
+                color: isSelected ? AppColors.accent : AppColors.surfaceAlt,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 icon,
-                color: isSelected
-                    ? AppColors.accent
-                    : Colors.white.withOpacity(0.6),
+                color: isSelected ? Colors.white : AppColors.textSecondary,
                 size: 22,
               ),
             ),
@@ -535,27 +527,28 @@ class _HomeDashboardState extends State<HomeDashboard>
                     title,
                     style: TextStyle(
                       color: isSelected
-                          ? Colors.white
-                          : Colors.white.withOpacity(0.9),
+                          ? AppColors.accent
+                          : AppColors.textPrimary,
                       fontSize: 15,
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.w500,
+                      fontWeight:
+                          isSelected ? FontWeight.w700 : FontWeight.w500,
+                      letterSpacing: 0.2,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: TextStyle(
-                      color: Colors.white.withOpacity(0.5),
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
                       fontSize: 12,
+                      height: 1.6,
                     ),
                   ),
                 ],
               ),
             ),
             if (isSelected)
-              Icon(
+              const Icon(
                 Icons.check_circle_rounded,
                 color: AppColors.accent,
                 size: 24,
@@ -620,28 +613,21 @@ class _HomeDashboardState extends State<HomeDashboard>
     String subtitle,
   ) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: AppColors.surface.withOpacity(0.4),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.accent.withOpacity(0.15), width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.border, width: 1),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: AppColors.accent.withOpacity(0.1),
-              borderRadius: BorderRadius.circular(10),
+            decoration: const BoxDecoration(
+              color: AppColors.accentSoft,
+              shape: BoxShape.circle,
             ),
-            child: Icon(icon, size: 18, color: AppColors.accent),
+            child: Icon(icon, size: 16, color: AppColors.accent),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -652,9 +638,10 @@ class _HomeDashboardState extends State<HomeDashboard>
                 Text(
                   title,
                   style: const TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textPrimary,
                     fontSize: 13,
                     fontWeight: FontWeight.w600,
+                    letterSpacing: 0.2,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -662,8 +649,8 @@ class _HomeDashboardState extends State<HomeDashboard>
                 const SizedBox(height: 2),
                 Text(
                   subtitle,
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.5),
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
                     fontSize: 10,
                   ),
                   maxLines: 1,
@@ -687,124 +674,69 @@ class _HomeDashboardState extends State<HomeDashboard>
               : (l10n?.connect ?? 'Connect'));
     final icon = widget.isConnected ? Icons.power : Icons.power_settings_new;
 
+    final fillColor = widget.isConnected
+        ? AppColors.accent
+        : (isBusy ? AppColors.accentWarm : AppColors.surface);
+    final textColor =
+        widget.isConnected || isBusy ? Colors.white : AppColors.textPrimary;
+    final dotColor = widget.isConnected
+        ? Colors.white
+        : (isBusy ? AppColors.accentWarm : AppColors.success);
+
     return GestureDetector(
       onTap: isBusy ? null : widget.onConnectPressed,
       child: SizedBox(
         width: 240,
         height: 68,
-        child: DecoratedBox(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 220),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(26),
-            gradient: LinearGradient(
-              colors: widget.isConnected
-                  ? const [Color(0xFF343A43), Color(0xFF1A1D23)]
-                  : const [Color(0xFF2F3540), Color(0xFF12151B)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            borderRadius: BorderRadius.circular(999),
+            color: fillColor,
             border: Border.all(
-              color: AppColors.accent.withValues(alpha: 0.55),
-              width: 1.1,
+              color: widget.isConnected || isBusy
+                  ? Colors.transparent
+                  : AppColors.border,
+              width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.accent.withValues(alpha: 0.42),
-                blurRadius: 34,
-                offset: const Offset(0, 14),
-              ),
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.32),
-                blurRadius: 18,
-                offset: const Offset(0, 10),
+                color: widget.isConnected
+                    ? AppColors.accent.withValues(alpha: 0.28)
+                    : AppColors.shadowFaint,
+                blurRadius: 28,
+                offset: const Offset(0, 12),
               ),
             ],
           ),
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // 柔和的银色光带，保持静态质感
-              Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(26),
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.white.withValues(alpha: 0.12),
-                        Colors.white.withValues(alpha: 0.02),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                  ),
-                ),
-              ),
-              // 轻微呼吸感，但不改变尺寸
-              Positioned.fill(
-                child: AnimatedBuilder(
-                  animation: _glowController,
-                  builder: (context, _) {
-                    final glow =
-                        0.06 +
-                        0.04 * math.sin(_glowAnimation.value * math.pi * 2);
-                    return DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(26),
-                        gradient: RadialGradient(
-                          colors: [
-                            AppColors.accent.withValues(alpha: glow),
-                            Colors.transparent,
-                          ],
-                          radius: 0.9,
-                          center: Alignment.center,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
               Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(icon, color: Colors.white, size: 20),
+                  Icon(icon, color: textColor, size: 20),
                   const SizedBox(width: 10),
                   Text(
                     label,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 16,
-                      letterSpacing: 0.6,
+                    style: TextStyle(
+                      color: textColor,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15,
+                      letterSpacing: 0.5,
                     ),
                   ),
                 ],
               ),
-              // 状态指示点
               Positioned(
-                right: 16,
-                child: Container(
-                  width: 10,
-                  height: 10,
+                right: 18,
+                child: AnimatedContainer(
+                  duration: const Duration(milliseconds: 180),
+                  width: 8,
+                  height: 8,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: widget.isConnected
-                          ? [const Color(0xFF6CFFB8), AppColors.accent]
-                          : (isBusy
-                                ? [
-                                    const Color(0xFFFFE18D),
-                                    const Color(0xFFFFB347),
-                                  ]
-                                : [AppColors.accent, const Color(0xFF6F7A8C)]),
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: widget.isConnected
-                            ? AppColors.accent.withValues(alpha: 0.5)
-                            : AppColors.accent.withValues(alpha: 0.25),
-                        blurRadius: 8,
-                        spreadRadius: 1,
-                      ),
-                    ],
+                    color: dotColor,
                   ),
                 ),
               ),
@@ -848,62 +780,53 @@ class _HomeDashboardState extends State<HomeDashboard>
       child: Container(
         margin: const EdgeInsets.only(bottom: 24),
         width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              AppColors.accent.withValues(alpha: 0.2),
-              AppColors.accent.withValues(alpha: 0.05),
-            ],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
+          color: AppColors.accentSoft,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: AppColors.accent.withValues(alpha: 0.2),
-            width: 1,
-          ),
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: AppColors.accent.withValues(alpha: 0.2),
+              decoration: const BoxDecoration(
+                color: AppColors.accent,
                 shape: BoxShape.circle,
               ),
               child: const Icon(
-                Icons.card_giftcard,
-                color: AppColors.accent,
-                size: 20,
+                Icons.card_giftcard_rounded,
+                color: Colors.white,
+                size: 18,
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     AppLocalizations.of(context)?.inviteFriendsTitle ?? '邀请有礼',
-                    style: TextStyle(
-                      color: Colors.white,
+                    style: const TextStyle(
+                      color: AppColors.textPrimary,
                       fontSize: 14,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w700,
+                      letterSpacing: 0.2,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 3),
                   Text(
                     AppLocalizations.of(context)?.inviteFriendsSubtitle ??
                         '邀请好友加入，获取丰厚奖励',
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.6),
+                    style: const TextStyle(
+                      color: AppColors.textSecondary,
                       fontSize: 11,
+                      height: 1.6,
                     ),
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right, color: Colors.white54),
+            const Icon(Icons.chevron_right_rounded, color: AppColors.accent),
           ],
         ),
       ),
@@ -915,7 +838,7 @@ class _HomeDashboardState extends State<HomeDashboard>
       context: context,
       barrierDismissible: false,
       barrierLabel: 'Dismiss',
-      barrierColor: Colors.black.withOpacity(0.5),
+      barrierColor: AppColors.textPrimary.withValues(alpha: 0.35),
       transitionDuration: const Duration(milliseconds: 500),
       pageBuilder: (context, animation, secondaryAnimation) {
         return const SizedBox(); // 这里的 builder 不重要，主要看 transitionBuilder
@@ -931,10 +854,7 @@ class _HomeDashboardState extends State<HomeDashboard>
           scale: Tween<double>(begin: 0.8, end: 1.0).animate(curve),
           child: FadeTransition(
             opacity: animation,
-            child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-              child: LogNoticeDialog(notice: notice),
-            ),
+            child: LogNoticeDialog(notice: notice),
           ),
         );
       },
@@ -960,20 +880,12 @@ class LogNoticeDialog extends StatelessWidget {
             borderRadius: BorderRadius.circular(24),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.3),
-                blurRadius: 30,
-                offset: const Offset(0, 15),
-              ),
-              BoxShadow(
-                color: AppColors.accent.withOpacity(0.15),
-                blurRadius: 20,
-                spreadRadius: -2,
+                color: AppColors.shadowSoft,
+                blurRadius: 36,
+                offset: const Offset(0, 18),
               ),
             ],
-            border: Border.all(
-              color: AppColors.accent.withOpacity(0.2),
-              width: 1.0,
-            ),
+            border: Border.all(color: AppColors.border, width: 1),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -1018,8 +930,9 @@ class LogNoticeDialog extends StatelessWidget {
                       notice.title,
                       style: const TextStyle(
                         fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                        letterSpacing: 0.2,
                       ),
                       textAlign: TextAlign.center,
                     ),
@@ -1029,10 +942,10 @@ class LogNoticeDialog extends StatelessWidget {
                       child: SingleChildScrollView(
                         child: Text(
                           notice.content,
-                          style: TextStyle(
-                            fontSize: 15,
-                            color: Colors.white.withOpacity(0.8),
-                            height: 1.6,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: AppColors.textSecondary,
+                            height: 1.75,
                           ),
                           textAlign: TextAlign.start,
                         ),
@@ -1040,41 +953,27 @@ class LogNoticeDialog extends StatelessWidget {
                     ),
                     const SizedBox(height: 24),
 
-                    // 按钮
-                    GestureDetector(
-                      onTap: () async {
-                        final prefs = await SharedPreferences.getInstance();
-                        await prefs.setInt('last_read_notice_id', notice.id);
-                        if (context.mounted) Navigator.pop(context);
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              AppColors.accent,
-                              AppColors.accent.withOpacity(0.8),
-                            ],
-                          ),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.accent.withOpacity(0.3),
-                              blurRadius: 12,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
+                    SizedBox(
+                      width: double.infinity,
+                      height: 48,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          final prefs = await SharedPreferences.getInstance();
+                          await prefs.setInt('last_read_notice_id', notice.id);
+                          if (context.mounted) Navigator.pop(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.accent,
+                          foregroundColor: Colors.white,
+                          shape: const StadiumBorder(),
+                          elevation: 0,
                         ),
-                        child: Center(
-                          child: Text(
-                            AppLocalizations.of(context)?.gotIt ?? '我知道了',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              letterSpacing: 0.5,
-                            ),
+                        child: Text(
+                          AppLocalizations.of(context)?.gotIt ?? '我知道了',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 0.4,
                           ),
                         ),
                       ),

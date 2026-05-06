@@ -2,9 +2,9 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/material.dart';
+import '../config/brand_config.dart';
 import '../l10n/generated/app_localizations.dart';
 import '../models/plan.dart';
-import '../services/latency_test_service.dart';
 import '../services/subscription_service.dart';
 
 import '../services/unified_vpn_service.dart';
@@ -17,10 +17,10 @@ import 'account_screen.dart';
 import 'home_dashboard.dart';
 import 'plans_screen.dart';
 import 'orders_screen.dart';
+import 'world_map_shell.dart';
 import '../widgets/animated_background.dart';
 import '../widgets/flux_loader.dart';
 import '../widgets/glass_nav_bar.dart';
-import '../widgets/desktop_nav.dart';
 import '../widgets/node_picker_sheet.dart';
 
 import 'package:window_manager/window_manager.dart';
@@ -46,7 +46,8 @@ class _RootShellState extends State<RootShell> with WindowListener {
   bool _isSwitching = false;
   int _accountReload = 0;
   bool _isConnecting = false;
-  List<ServerNode>? _nodesCache;
+  List<ServerNode> _nodesCache = const [];
+  ServerNode? _selectedNode;
   bool _isInitializing = true; // 全局初始化状态
 
   // Lazy loading: 跟踪哪些页面已经被访问
@@ -83,12 +84,26 @@ class _RootShellState extends State<RootShell> with WindowListener {
       // 3. 核心网络配置 (获取并缓存最快域名)
       await RemoteConfigService().getActiveDomain();
 
-      // 4. ✅ 仅加载 Home 页需要的数据（公告）
-      // 其他页面数据将在用户切换到对应 tab 时才加载
-      await Future.wait([
+      // 4. ✅ 仅加载 Home 页需要的数据（公告）+ 节点列表
+      final results = await Future.wait([
         UserDataService().getNotices(), // Home 页公告
         _subscriptionService.fetchNodes(), // 节点列表（VPN 功能需要）
       ]);
+      final fetchedNodes = results[1];
+      if (fetchedNodes is List<ServerNode>) {
+        _nodesCache = fetchedNodes;
+        // 恢复上次选中的节点
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          final lastNodeName = prefs.getString('last_node_name');
+          if (lastNodeName != null) {
+            _selectedNode = _nodesCache.firstWhere(
+              (n) => n.name == lastNodeName,
+              orElse: () => _nodesCache.first,
+            );
+          }
+        } catch (_) {}
+      }
 
       // 5. 初始化完成
       if (mounted) {
@@ -405,6 +420,37 @@ class _RootShellState extends State<RootShell> with WindowListener {
 
   bool _isLoadingNodes = false;
 
+  /// 在桌面端打开次级路由(账户/邀请/套餐 等)。
+  Future<void> _openSecondaryRoute(Widget child) async {
+    await Navigator.of(context).push(
+      PageRouteBuilder(
+        opaque: false,
+        barrierColor: AppColors.textPrimary.withValues(alpha: 0.25),
+        pageBuilder: (context, animation, _) {
+          final curved = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          );
+          return FadeTransition(
+            opacity: curved,
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Material(
+                  color: AppColors.background,
+                  borderRadius: BorderRadius.circular(16),
+                  clipBehavior: Clip.antiAlias,
+                  child: child,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+    if (mounted) setState(() => _accountReload++);
+  }
+
   Future<void> _showNodePicker() async {
     if (_isConnecting) return;
 
@@ -414,8 +460,8 @@ class _RootShellState extends State<RootShell> with WindowListener {
     await showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent, // Important for glass effect
-      barrierColor: Colors.black54, // Ensure barrier is visible and interactive
+      backgroundColor: Colors.transparent,
+      barrierColor: AppColors.textPrimary.withValues(alpha: 0.35),
       isDismissible: true,
       elevation: 0,
       // Allow dragging the sheet up to 90%
@@ -475,79 +521,47 @@ class _RootShellState extends State<RootShell> with WindowListener {
   }
 
   Widget _buildMainScaffold() {
-    // 桌面端使用侧边导航
+    // 桌面端:三栏世界地图风格 shell
     if (_isDesktop) {
-      return Scaffold(
-        body: Row(
-          children: [
-            // 侧边导航
-            DesktopNav(
-              selectedIndex: _index,
-              onDestinationSelected: _switchTab,
-            ),
-            // 主内容区
-            Expanded(
-              child: Stack(
-                children: [
-                  // Global Background
-                  const Positioned.fill(
-                    child: AnimatedMeshBackground(child: SizedBox.expand()),
-                  ),
-                  // 顶部工具栏
-                  Positioned(
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 16,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          IconButton(
-                            icon: _isLoadingNodes
-                                ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: FluxLoader(
-                                      size: 20,
-                                      color: AppColors.textPrimary,
-                                    ),
-                                  )
-                                : const Icon(
-                                    Icons.storage_rounded,
-                                    color: AppColors.textPrimary,
-                                  ),
-                            tooltip:
-                                AppLocalizations.of(context)?.nodeList ??
-                                'Node List',
-                            onPressed: _showNodePicker,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  // Content
-                  Positioned.fill(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 60),
-                      child: AnimatedOpacity(
-                        duration: const Duration(milliseconds: 180),
-                        curve: Curves.easeOutCubic,
-                        opacity: _isSwitching ? 0.0 : 1.0,
-                        child: IndexedStack(
-                          index: _index,
-                          children: _buildLazyPages(),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+      return WorldMapShell(
+        nodes: _nodesCache,
+        selectedNode: _selectedNode,
+        isConnected: _status == ShellStatus.connected,
+        isConnecting: _isConnecting || _status == ShellStatus.connecting,
+        statusMessage: _statusMessage,
+        onConnectPressed: _toggleConnection,
+        onNodeSelected: (node) {
+          setState(() => _selectedNode = node);
+          _connectNode(node);
+        },
+        onPickFastest: _connectWithLastNode,
+        onOpenAccount: () => _openSecondaryRoute(
+          AccountScreen(
+            onLogout: widget.onLogout,
+            connectionStatus: _statusMessage,
+            connectionState: _status.name,
+            reloadToken: _accountReload,
+          ),
+        ),
+        onOpenInvite: () => _openSecondaryRoute(
+          AccountScreen(
+            onLogout: widget.onLogout,
+            connectionStatus: _statusMessage,
+            connectionState: _status.name,
+            reloadToken: _accountReload,
+          ),
+        ),
+        onOpenPlans: () => _openSecondaryRoute(
+          PlansScreen(onChoose: _openCheckout),
+        ),
+        onOpenSupport: () {},
+        onOpenSettings: () => _openSecondaryRoute(
+          AccountScreen(
+            onLogout: widget.onLogout,
+            connectionStatus: _statusMessage,
+            connectionState: _status.name,
+            reloadToken: _accountReload,
+          ),
         ),
       );
     }
@@ -561,9 +575,9 @@ class _RootShellState extends State<RootShell> with WindowListener {
       appBar: AppBar(
         title: Row(
           children: [
-            const Icon(Icons.blur_on, color: AppColors.accent),
+            BrandConfig.buildLogo(size: 24, color: AppColors.accent),
             const SizedBox(width: 8),
-            const Text('Flux'),
+            const Text(BrandConfig.appName),
             const Spacer(),
             IconButton(
               icon: _isLoadingNodes

@@ -1,3 +1,5 @@
+import '../utils/json_utils.dart';
+
 class InviteFetchData {
   final List<InviteCode> codes;
   final InviteStat stat;
@@ -10,7 +12,7 @@ class InviteFetchData {
   factory InviteFetchData.fromJson(Map<String, dynamic> json) {
     return InviteFetchData(
       codes: (json['codes'] as List<dynamic>?)
-              ?.map((e) => InviteCode.fromJson(e))
+              ?.map((e) => InviteCode.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
       stat: InviteStat.fromList(json['stat'] as List<dynamic>? ?? []),
@@ -44,11 +46,11 @@ class InviteStat {
       );
     }
     return InviteStat(
-      registeredUsers: list[0] as int? ?? 0,
-      validCommission: list[1] as num? ?? 0,
-      pendingCommission: list[2] as num? ?? 0,
-      commissionRate: list[3] as num? ?? 0,
-      availableCommission: list[4] as num? ?? 0,
+      registeredUsers: JsonUtils.asInt(list[0]),
+      validCommission: JsonUtils.asNum(list[1]),
+      pendingCommission: JsonUtils.asNum(list[2]),
+      commissionRate: JsonUtils.asNum(list[3]),
+      availableCommission: JsonUtils.asNum(list[4]),
     );
   }
 }
@@ -74,13 +76,13 @@ class InviteCode {
 
   factory InviteCode.fromJson(Map<String, dynamic> json) {
     return InviteCode(
-      id: json['id'] as int? ?? 0,
-      userId: json['user_id'] as int? ?? 0,
-      code: json['code'] as String? ?? '',
-      status: json['status'] as int? ?? 0,
-      pv: json['pv'] as int? ?? 0,
-      createdAt: json['created_at'] as int? ?? 0,
-      updatedAt: json['updated_at'] as int? ?? 0,
+      id: JsonUtils.asInt(json['id']),
+      userId: JsonUtils.asInt(json['user_id']),
+      code: JsonUtils.asString(json['code']),
+      status: JsonUtils.asInt(json['status']),
+      pv: JsonUtils.asInt(json['pv']),
+      createdAt: JsonUtils.asInt(json['created_at']),
+      updatedAt: JsonUtils.asInt(json['updated_at']),
     );
   }
 }
@@ -102,11 +104,11 @@ class InviteDetail {
 
   factory InviteDetail.fromJson(Map<String, dynamic> json) {
     return InviteDetail(
-      id: json['id'] as int? ?? 0,
-      commissionStatus: json['commission_status'] as int? ?? 0,
-      commissionBalance: json['commission_balance'] as num? ?? 0,
-      createdAt: json['created_at'] as int? ?? 0,
-      updatedAt: json['updated_at'] as int? ?? 0,
+      id: JsonUtils.asInt(json['id']),
+      commissionStatus: JsonUtils.asInt(json['commission_status']),
+      commissionBalance: JsonUtils.asNum(json['commission_balance']),
+      createdAt: JsonUtils.asInt(json['created_at']),
+      updatedAt: JsonUtils.asInt(json['updated_at']),
     );
   }
 }
